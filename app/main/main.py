@@ -1,6 +1,7 @@
 import uvicorn
+
 from app.api.route import app
-from app.settings.settings import FASTAPI_PORT, FASTAPI_HOST
+from app.settings.settings import FASTAPI_HOST, FASTAPI_PORT
 
 if __name__ == '__main__':
     uvicorn.run(

@@ -1,22 +1,17 @@
+import io
+import logging
 from http import HTTPStatus
 from typing import List
 
-from fastapi import (
-    UploadFile,
-    File,
-    HTTPException,
-    FastAPI,
-)
+import numpy as np
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
+from PIL import Image
 from sqlalchemy import select
 
-from app.models import models
-from app.db_model.database import RequestHistory
 from app import session_local
-import logging
-import io
-from PIL import Image
-import numpy as np
+from app.db_model.database import RequestHistory
+from app.models import models
 
 app = FastAPI()
 
@@ -83,25 +78,36 @@ async def upload_image(
     :raise: HTTPException
     """
     if model_name not in models.available_models:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Model not found")
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Model not found",
+        )
     try:
         return {"description": describe_image(file, model_name, length)}
     except Exception as e:
         logging.error(f"Error during processing: {e}")
-        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Processing error")
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail="Processing error",
+        )
 
 
 @app.get("/history/", response_model=None)
 async def get_history():
-    """Получает и возвращает список записей запросов с их идентификатором и описанием изображения
+    """Получает и возвращает список записей запросов с их идентификатором
+    и описанием изображения
 
-    :return: Список записей запросов с их идентификатором и описанием изображения
+    :return: Список записей запросов с их идентификатором и
+    описанием изображения
     """
     async with session_local() as db_session:
         query = select(RequestHistory)
         result = await db_session.execute(query)
         history = result.scalars().all()
-    return [{"id": record.id, "description": record.image_description} for record in history]
+    return [
+        {"id": record.id, "description": record.image_description}
+        for record in history
+    ]
 
 
 @app.post("/upload-images/")
@@ -111,7 +117,10 @@ async def upload_images(
         length: int = 20,
 ):
     if model_name not in models.available_models:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Model not found")
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Model not found",
+        )
     descriptions = []
 
     for file in files:
@@ -119,7 +128,9 @@ async def upload_images(
             # Логика обработки каждого файла
             descriptions.append(describe_image(file, model_name, length))
         except Exception as e:
-            logging.error(f"Error: {e} during processing image: {file.filename}")
+            logging.error(
+                f"Error: {e} during processing image: {file.filename}"
+            )
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail=f"Error during processing image: {file.filename}"
