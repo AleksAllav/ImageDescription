@@ -4,6 +4,11 @@ import aiohttp
 import gradio as gr
 from PIL import Image
 
+from app.settings.settings import (
+    FASTAPI_HOST,
+    FASTAPI_PORT,
+)
+
 
 def image_to_bytes(image: Image.Image, format_: str = 'PNG') -> bytes:
     """Преобразует изображение PIL в байтовый формат."""
@@ -13,11 +18,12 @@ def image_to_bytes(image: Image.Image, format_: str = 'PNG') -> bytes:
 
 
 async def gradio_interface(image, model_name='blip', length=20):
+    url = f'http://{FASTAPI_HOST}:{FASTAPI_PORT}/upload-image/'
     async with aiohttp.ClientSession(trust_env=True) as session:
         response = await session.post(
-            url="http://127.0.0.1:5005/upload-image/",
+            url=url,
             data={'file': image_to_bytes(image)},
-            params={"model_name": model_name, "length": length},
+            params={"model_name": model_name, "length": int(length)},
         )
         resp = await response.json()
         return resp.get('description')

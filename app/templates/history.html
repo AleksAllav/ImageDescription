@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request History</title>
+</head>
+<body>
+    <h1>Request History</h1>
+    <ul>
+        {% for request in history %}
+            <li>{{ request.image_description }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
