@@ -4,13 +4,7 @@ from http import HTTPStatus
 from typing import List
 
 import numpy as np
-from fastapi import (
-    FastAPI,
-    Request,
-    File,
-    HTTPException,
-    UploadFile,
-)
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 from PIL import Image
 from sqlalchemy import select

@@ -4,10 +4,7 @@ import aiohttp
 import gradio as gr
 from PIL import Image
 
-from app.settings.settings import (
-    FASTAPI_HOST,
-    FASTAPI_PORT,
-)
+from app.settings.settings import FASTAPI_HOST, FASTAPI_PORT
 
 
 def image_to_bytes(image: Image.Image, format_: str = 'PNG') -> bytes:
